@@ -1,0 +1,14 @@
+[Unit]
+Description=Waggle Network Firewall
+After=network.target
+Wants=network.target
+
+[Service]
+RemainAfterExit=true
+Restart=on-failure
+RestartSec=30
+ExecStart=/usr/bin/waggle-firewall
+ExecStop=/usr/bin/waggle-firewall -r
+
+[Install]
+WantedBy=multi-user.target
