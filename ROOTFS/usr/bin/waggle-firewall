@@ -3,20 +3,23 @@
 # Print the script usage help
 print_help() {
   echo """
-usage: $0 [-r]
+usage: $0 -r <rules path> [-d]
 
-Adds or removes firewall rules.
+Adds or removes firewall rules based on rules file
 
-  -r : deletes firewall rules instead of adding them
+  -r : firewall rules to apply
+  -d : deletes firewall rules instead of adding them
   -? : print this help menu
 """
 }
 
 DEL=
 # Process script input arguments
-while getopts "r?" opt; do
+while getopts "r:d?" opt; do
   case $opt in
-    r) DEL=1
+    r) RULE_FILE=$(realpath $OPTARG)
+      ;;
+    d) DEL=1
       ;;
     ?|*)
       print_help
@@ -25,24 +28,15 @@ while getopts "r?" opt; do
   esac
 done
 
-CONFIGS=("wlan-interface" "wifi-interface" "modem-interface")
-RULES=(
-	"INPUT -i {{INTF}} -m conntrack ! --ctstate RELATED,ESTABLISHED -j DROP"
-	"FORWARD -i {{INTF}} -m conntrack ! --ctstate RELATED,ESTABLISHED -j DROP"
-)
+if [ ! -f "$RULE_FILE" ]; then
+  echo "Error: firewall rule file is required."
+  exit 1
+fi
 
-INTF=()
-for config in "${CONFIGS[@]}"; do
-	if waggle-get-config -s hardware -k $config &>/dev/null; then
-		INTF+=("$(waggle-get-config -s hardware -k $config)")
-	else
-		echo "Warning: skipping [$config], not found in config"
-	fi
-done
+COUNT=$(cat $RULE_FILE | wc -l)
+echo "Processing $COUNT rules [rule file: $RULE_FILE]"
 
-for r in "${RULES[@]}"; do
-	for i in "${INTF[@]}"; do
-		rule=$(echo $r | sed "s/{{INTF}}/$i/g")
+while read rule; do
 		# test if the rule is already applied
 		if ! iptables -C $rule &>/dev/null; then
 			if [ -z "$DEL" ]; then
@@ -63,5 +57,4 @@ for r in "${RULES[@]}"; do
 				iptables -D $rule
 			fi
 		fi
-	done
-done
+done < $RULE_FILE

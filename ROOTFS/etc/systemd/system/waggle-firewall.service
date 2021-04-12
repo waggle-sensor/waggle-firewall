@@ -15,8 +15,7 @@ Before=shutdown.target
 RemainAfterExit=true
 Restart=on-failure
 RestartSec=30
-ExecStart=/usr/bin/waggle-firewall
-ExecStop=/usr/bin/waggle-firewall -r
+ExecStart=/usr/bin/waggle-firewall -r /etc/waggle/firewall/rules
 
 [Install]
 WantedBy=multi-user.target
