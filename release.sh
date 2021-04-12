@@ -17,6 +17,7 @@ Architecture: ${ARCH}
 Priority: optional
 EOL
 
+cp -p deb/install/postinst ${BASEDIR}/DEBIAN/
 cp -p deb/install/prerm ${BASEDIR}/DEBIAN/
 
 cp -pr ROOTFS/* ${BASEDIR}/
