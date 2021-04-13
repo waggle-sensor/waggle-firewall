@@ -58,3 +58,6 @@ while read rule; do
 			fi
 		fi
 done < $RULE_FILE
+
+# notify sytemd we are startd and dependent services can start (must be last)
+systemd-notify --ready
