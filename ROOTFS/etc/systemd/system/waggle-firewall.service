@@ -5,8 +5,8 @@ DefaultDependencies=no
 Before=network-pre.target
 Wants=network-pre.target
 
-Wants=systemd-modules-load.service local-fs.target
-After=systemd-modules-load.service local-fs.target
+Wants=local-fs.target
+After=local-fs.target
 
 Conflicts=shutdown.target
 Before=shutdown.target
