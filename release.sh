@@ -21,9 +21,6 @@ cp -p deb/install/postinst ${BASEDIR}/DEBIAN/
 cp -p deb/install/prerm ${BASEDIR}/DEBIAN/
 
 cp -pr ROOTFS/* ${BASEDIR}/
-# touch empty config file
-mkdir -p ${BASEDIR}/etc/waggle/firewall/
-touch ${BASEDIR}/etc/waggle/firewall/rules
 
 dpkg-deb --root-owner-group --build ${BASEDIR} "${NAME}_${VERSION_SHORT}_${ARCH}.deb"
 mv *.deb /output/
