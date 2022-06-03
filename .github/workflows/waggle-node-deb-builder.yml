@@ -1,5 +1,12 @@
-name: CI/CD
-on: push
+name: Waggle Node Debian Package Builder CI
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["*"]
+  pull_request:
+    branches: ["main"]
+
 jobs:
   build:
     name: Build and Release
@@ -7,8 +14,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Build deb
         run: ./build.sh
+
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
